@@ -19,13 +19,17 @@
     /* 글자 한줄 높이를 20px > 높이가 20px로 고정 */
     line-height: 20px;margin-top: 5px;}
     .line{display: block}
-    .box:hover img{transform: scale(1.05);}
+    .box:hover img{transform: scale(1.5);
+    transition: tr;}
     .box:hover .line{text-decoration: underline;}
+
+    .box img{
+    transition: transform 500ms;}
 
 
 
 </style>
-<style></style>
+
 <body>
     <div class="box">
         <!-- 이미지가 들어갈 박스 -->
