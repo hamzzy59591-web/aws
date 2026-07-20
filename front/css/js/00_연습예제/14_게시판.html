@@ -88,15 +88,15 @@
         e.preventDefault(); //태그의 기능을 막음
 
         // 제목 가져오기
-        const titleE1 = document.querySelector('#title')
-        let title = titleE1.value;
+        const titleEl = document.querySelector('#title');
+        let title = titleEl.value;
         //작성자 가져오기
-        const writerE1 = document.querySelector('#writer')
-        let writer = writerE1.value;
+        const writerEl = document.querySelector('#writer');
+        let writer = writerEl.value;
         
         //내용 가져오기
-        const contentE1 = document.querySelector('#content')
-        let content = contentE1.value;
+        const contentEl = document.querySelector('#content');
+        let content = contentEl.value;
         //제목, 작성자, 내용을 이용하여 객체를 생성
         let post = {
             num : posts.length + 1,
@@ -106,13 +106,14 @@
         }
         
         //게시글을 테이블에 추가
-        inserPostToTable(post)
+        insertPostToTable(post)
         //로컬 스토리지에 저장
+        posts.push(post)
         localStorage.setItem('posts',JSON.stringify(posts))
     });
         
 
-    function inserPostToTable(post){
+    function insertPostToTable(post){
         //게시글이 비어있으면
         if(!post){
             return;
@@ -136,8 +137,13 @@
     document.addEventListener('DOMContentLoaded',function(){
         //로컬 저장소에서 게시글 목록을 가져옴
         posts = JSON.parse(localStorage.getItem('posts'));
+        //저장된 게시글 목록이 없으면
+			if(!posts){
+				posts = [];
+				return;
+			}
         //가져온 게시글 목록을 반복문으로 화면에 출력
-        for(let i = 0; i < posts.length; i++){
+        for(i = 0; i < posts.length; ++i){
             let post = posts[i];
             inserPostToTable(post);
         }
