@@ -100,6 +100,7 @@ public class Ex10_컬렉션프레임워크 {
 		System.out.println(list);
 		
 		System.out.println("저장된 이름 개수 : "+list.size());
+		
 	}
 
 }
