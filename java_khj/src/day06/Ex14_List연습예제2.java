@@ -34,4 +34,6 @@ public class Ex14_List연습예제2 {
 		}
 		return list;
 	}
+	
+	
 }
