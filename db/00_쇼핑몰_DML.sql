@@ -97,3 +97,7 @@ values('ACC004','커플목걸이','커플목걸이입니다.',150000,NULL,'ACC')
 # 악세서리 -  제품명 : 돌목걸이, 내용 : 아이돌목걸이입니다. 가격 : 350000, 썸네일 없음 
 insert into product(code,NAME,content,price,thumbnail, ca_code)
 values('ACC005','돌목걸이','아이돌목걸이입니다.',350000,NULL,'ACC');
+
+# 모든 제품 재고 입고
+update product set amount = amount + 10;
+

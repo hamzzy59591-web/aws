@@ -65,9 +65,12 @@ join product using(code);
 
 select * from buy;
  
-select code, sum(buy.amount) as 판매량, sum(buy.amount*price) as 판매액
+select
+	code, sum(buy.amount) as 판매량, sum(buy.amount * price) 판매액
 from 
 	buy
 	join product using(code)
-group by code;
+group by code
+order by 판매량 desc, 판매액 desc, code
+limit 1;
 
