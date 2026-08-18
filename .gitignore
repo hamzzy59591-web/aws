@@ -25,4 +25,5 @@ replay_pid*
 .classpath
 .project
 */.gitignore
-ide/
+ide2/
+/.metadata/
