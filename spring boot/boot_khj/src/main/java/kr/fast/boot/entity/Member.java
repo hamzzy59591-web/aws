@@ -9,7 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name ="mamber")
+@Table(name ="member")
 @Getter //필드들의 getter를 추가
 @NoArgsConstructor //기본 생성자
 @AllArgsConstructor // 모든 필드를 매개변수로 하는 생성자를 추가

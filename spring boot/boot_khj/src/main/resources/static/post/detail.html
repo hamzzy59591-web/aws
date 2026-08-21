@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title> 부트: 게시글 </title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="/js/Layout.js"></script>
+</head>
+<body>
+	<app-header></app-header>
+	<div class="container">
+		<br><h1> 게시글 상세 </h1><br>
+		
+		<!-- 제목, 내용, 첨부파일(지금은 생략), 작성자(로그인 기능 구현 후 제거) -->
+		<div class="form-goroup mb-3">
+			<label class="form-label">제목</label>
+			<input type="text" class="form-control" readonly>			
+		</div>
+		<label class="form-label">작성자</label>
+		<div class="form-goroup mb-3">
+			<input type="text" class="form-control" readonly>			
+		</div>
+		<label class="form-label">게시판</label>
+		<div class="form-goroup mb-3">
+			<input type="text" class="form-control" readonly>			
+		</div>
+		<label class="form-label">조회수</label>
+		<div class="form-goroup mb-3">
+			<input type="text" class="form-control" readonly>			
+		</div>
+		<label class="form-label">작성일</label>
+		<div class="form-goroup mb-3">
+			<input type="text" class="form-control" readonly>			
+		</div>
+		<div class="mb-3 d-flex justify-content-center">
+			 <button class="btn btn-outline-success me-3">좋아요(0)</button>
+			 <button class="btn btn-outline-success">싫어요(0)</button>
+		</div>
+		<label class="form-label">내용</label>
+		<div class="form-goroup mb-3">
+			<textarea class="form-control" rows="10" readonly></textarea>		
+		</div>
+		
+		
+	</div>
+	<script>
+		//URL에 있는 게시글 번호 num을 가져옴
+		const urlParams = new URLSearchParams(location.search);
+		const postId = urlParams.get("num");
+		
+		//서버에 게시글을 요청해서 콘솔에 출력
+		//url : /api/post/게시글번호
+		//method:get
+		
+		getPost(postId);
+		
+		async function getPost(postId){
+			try{
+				const response = await fetch(`/api/post/${postId}`);
+				
+				if(!response.ok){
+					console.log("서버와 연결이 원할하지 않습니다.");
+					return;
+				}
+				const result = await response.text();
+				let str = '';
+				result.forEach(post=>{
+					str +=`
+						
+					`
+				});
+				boardListEl.innerHTML = str;
+						
+			}catch(e){
+				console.log("에러발생 : n",e)
+			}
+		}	
+			
+		
+	</script>
+</body>
+</html>

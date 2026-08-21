@@ -10,7 +10,7 @@
 <body>
 	<app-header></app-header>
 	<div class="container">
-		<br><h1> 게시글 목록 </h1><br>
+		<br><h1> 게시글 상세 </h1><br>
 		<table class="table table-hover">
 			<thead>
 				<tr>
@@ -31,6 +31,46 @@
 				</tr>
 			</tbody>
 		</table>
+		<a href="/post/insert.html" class="btn btn-outline-success">글쓰기</a>
 	</div>
+	
+	<script>
+		//게시글 목록을 가져와서 콘솔에 출력하도록 작업
+		
+		async function getPostList(){
+			const tbodyEl = document.querySelector(".table tbody");
+			
+		
+		//서버에 게시판 목록을 요청
+			try{
+				const response = await fetch("/api/post");
+			
+				if(!response.ok){
+					console.log("정상 종료 아님");
+					return;
+				}
+				const result = await response.json();
+				let str = '';
+				result.forEach(post=>{
+					str +=`
+						<tr>
+							<td>${post.id}</td>
+							<td><a href="/post/detail.html?num=${post.id}">${post.title}</a></td>
+							<td>${post.memberId}</td>
+							<td>${post.createdAt.slice(0,10)}</td>
+							<td>${post.upCount}/${post.downCount}</td>
+						<tr>
+					`
+				});
+				console.log(result);
+				
+				tbodyEl.innerHTML = str;
+		}catch(e){
+				console.log("에러발생 : n",e)
+			}
+		
+		}
+		getPostList();
+	</script>
 </body>
 </html>
