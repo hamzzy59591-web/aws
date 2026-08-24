@@ -38,7 +38,6 @@
 		//게시글 목록을 가져와서 콘솔에 출력하도록 작업
 		
 		async function getPostList(){
-			const tbodyEl = document.querySelector(".table tbody");
 			
 		
 		//서버에 게시판 목록을 요청
@@ -51,6 +50,14 @@
 				}
 				const result = await response.json();
 				let str = '';
+				
+				if(result.length == 0){
+					str ='<tr><td colspan="5" class="text-center">등록된 게시글이 없습니다.</td></tr>';
+					const tbodyEl = document.querySelector(".table tbody");
+					tbodyEl.innerHTML = str;
+					return;
+				}
+				
 				result.forEach(post=>{
 					str +=`
 						<tr>
@@ -59,14 +66,15 @@
 							<td>${post.memberId}</td>
 							<td>${post.createdAt.slice(0,10)}</td>
 							<td>${post.upCount}/${post.downCount}</td>
-						<tr>
+						</tr>
 					`
 				});
 				console.log(result);
 				
+				const tbodyEl = document.querySelector(".table tbody");
 				tbodyEl.innerHTML = str;
 		}catch(e){
-				console.log("에러발생 : n",e)
+			console.log("에러발생 :", e)
 			}
 		
 		}

@@ -10,7 +10,8 @@ import kr.fast.boot.entity.Post;
 
 public interface PostRepository extends JpaRepository<Post, Integer> {
 
-	List<Post> findAllByOrderByIdDesc();
+	List<Post> findAllByIsDeletedOrderByIdDesc(String isDeleted);
+
 
 
 

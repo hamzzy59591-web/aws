@@ -3,9 +3,11 @@ package kr.fast.boot.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -51,16 +53,37 @@ public class PostController {
 		return ResponseEntity.ok(list);
 	}
 	
-	@GetMapping("/{Id}")
+	@GetMapping("/{id}")
 	public ResponseEntity<Object> idget(@PathVariable("id")int id) {
 		try {
+			//서비스야 조회수 증가 시켜줘
+			postService.updateView(id);
 			Post post = postService.getPost(id);
-			return ResponseEntity.ok("ok");
+			return ResponseEntity.ok(post);
 		}catch(Exception e) {
 			return ResponseEntity.ok("ok");
 		}
 	}
 	
+	@DeleteMapping("/{id}")
+	public ResponseEntity<Object> idDelete(@PathVariable("id")int id){
+		try {
+			postService.deletePost(id);
+			return ResponseEntity.ok("게시글을 삭제했습니다.");
+		}catch(Exception e) {
+			return ResponseEntity.ok(e.getMessage());
+		}
+	}
 	
-
+	@PutMapping("/{id}")
+	public ResponseEntity<Object> idPut(
+			@PathVariable("id")int id,
+			@RequestBody PostDTO dto){
+		try {
+			postService.updatePost(id, dto);
+			return ResponseEntity.ok("게시글을 수정했습니다.");
+		}catch(Exception e) {
+			return ResponseEntity.ok(e.getMessage());
+		}
+	}
 }

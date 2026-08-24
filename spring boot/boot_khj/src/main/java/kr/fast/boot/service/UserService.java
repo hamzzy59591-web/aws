@@ -1,5 +1,6 @@
 package kr.fast.boot.service;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,6 +15,7 @@ import lombok.AllArgsConstructor;
 public class UserService {
 	
 	private final MemberRepository memberRepository;
+	private final BCryptPasswordEncoder passwordEncoder;
 	
 	
 	@Transactional
@@ -39,13 +41,13 @@ public class UserService {
 			throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
 		}
 		//비번 암호화
+		String encodedPassword = passwordEncoder.encode(dto.getPw());
 		
 		//회원 가입
-		Member member = new Member(dto.getId(), dto.getPw(), dto.getEmail(), "USER");
+		Member member = new Member(dto.getId(), encodedPassword, dto.getEmail(), "USER");
 		
 		Member savedMember = memberRepository.save(member);
 		
-		System.out.println(savedMember.getRole());
 		
 	}
 	

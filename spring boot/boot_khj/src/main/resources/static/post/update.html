@@ -10,67 +10,76 @@
 <body>
 	<app-header></app-header>
 	<div class="container">
-		<br><h1> 게시글 등록 </h1><br>
+		<br><h1> 게시글 수정 </h1><br>
 		<form id="insertForm">
+		
+			<input type="hidden" class="form-control" name="id">
+			
 			<!-- 제목, 내용, 첨부파일(지금은 생략), 작성자(로그인 기능 구현 후 제거) -->
+			
 			<div class="form-group mb-3">
 				<input type="text" class="form-control" name="title" placeholder="제목">			
 			</div>
 			<div class="form-group mb-3">
-				<input type="text" class="form-control" name="writer" placeholder="작성자">			
-			</div>
-			<div class="form-group mb-3">
-				<select class="form-control board-list" name="boardId">
-					<option value="10">공지</option>
-				</select>
-			</div>
-			<div class="form-group mb-3">
 				<textarea class="form-control" rows="10" name="content" placeholder="작성글"></textarea>		
 			</div>
-			<button class="btn btn-outline-success col-12">게시글 등록</button>
+			<button class="btn btn-outline-success col-12">게시글 수정</button>
 		</form>
 	</div>
-	
 	<script>
-		getBoardList();
-	async function getBoardList(){
-		const boardListEl = document.querySelector(".board-list");
-		//서버에 게시판리스트를 요청
-		//url: /api/post/board
-		//method : get
-    	try{
-			const response = await fetch("/api/post/board");
-				
-			if(!response.ok){
+	
+	const urlParams = new URLSearchParams(location.search);
+	const postId = urlParams.get("num");
+	getPost(postId);
+	
+	async function getPost(postId){
+		
+		if(!postId){
+			alert("정상적이지 않은 접근입니다.");
+			location.href="/post/list.html"
+			return;
+		}
+		try{
+			const response = await fetch(`/api/post/${postId}`);
+			
+			/*if(!response.ok){
 				console.log("서버와 연결이 원할하지 않습니다.");
 				return;
 			}
+			*/
 			const result = await response.json();
-			let str = '';
-			result.forEach(board=>{
-				str +=`
-						<option value="${board.id}">${board.name}</option>
-				`
-			});
-			boardListEl.innerHTML = str;
+			
+			if(result.isDeleted =="Y"){
+				alert("삭제된 게시글 입니다.")
+				location.href="/post/list.html";
+				return;
+			}
+			
+					document.querySelector("[name=title]").value = result.title;
+				    document.querySelector("[name=content]").value = result.content;
+				    document.querySelector("[name=id]").value = result.id;
+					
 		}catch(e){
 			console.log("에러발생 : n",e)
 		}
-	}
+	}	
 	</script>
+	
+	
 	<script>
 		//form 태그에 submit 이벤트를 등록.
 		const formEl = document.querySelector("#insertForm");
 		//게시글 등록 버튼을 클릭하면 alert(1)이 띄도록
 		formEl.addEventListener("submit", async e=>{
 			e.preventDefault();
+			
 			const formData = new FormData(formEl);
 			const data = Object.fromEntries(formData.entries());
 			
 		
 			try{
-				const response = await fetch("/api/post",{
-					method : "POST", 
+				const response = await fetch("/api/post/"+postId,{
+					method : "put", 
 					headers : {
 						"Content-Type" : "application/json" 
 					},
@@ -83,7 +92,7 @@
 				}
 				const result = await response.text();
 				alert(result);
-				location.href="/post/detail.html?num"+postId;
+				location.href="/post/detail.html?num="+postId;
 			}catch(e){
 				console.log("에러발생 : n",e)
 			}
