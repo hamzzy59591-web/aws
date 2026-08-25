@@ -25,7 +25,7 @@ public class PostService {
 
 
 	@Transactional
-	public void insertPost(PostDTO dto) {
+	public int insertPost(PostDTO dto, String username) {
 		// 입력값 예외처리
 		if(dto == null || !dto.checkTitleValid()){
 			throw new IllegalArgumentException("제목을 입력하세요.");
@@ -38,12 +38,19 @@ public class PostService {
 			throw new IllegalArgumentException("잘못된 게시판입니다.");
 		}
 		
-		//post엔티티 생성
-		System.out.println(dto);
-		Post post = new Post(dto.title(),dto.content(),dto.writer(),dto.boardId());
-		
-		//레포야 엔티티 저장해
-		postRepository.save(post);
+		if(username == null || username.equals("anonymousUser")) {
+			throw new IllegalArgumentException("로그인이 필요합니다.");
+		}
+		try{
+			//post엔티티 생성
+			Post post = new Post(dto.title(),dto.content(),username,dto.boardId());
+			Post savedPost = postRepository.save(post);
+			return savedPost.getId();
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+			throw new IllegalArgumentException("쿼리 실행 중 이상이 생겼습니다.");
+		}
 	}
 
 	@Transactional
@@ -70,7 +77,7 @@ public class PostService {
 	}
 
 	@Transactional
-	public void deletePost(int id) {
+	public void deletePost(int id, String username) {
 		//레포야 게시글 가져와 id줄게 단, 없으면 예외 발생 시켜
 		Post post = postRepository.findById(id).orElseThrow(()-> new IllegalArgumentException("게시글이 존재하지 않습니다."));
 		
@@ -78,8 +85,11 @@ public class PostService {
 			throw new IllegalArgumentException("이미 삭제된 게시글 입니다.");
 		}
 		
-		//레포야 게시글 삭제해줘. 게시글 줄게
+		if(!post.getMemberId().equals(username)) {
+			throw new IllegalArgumentException("작성자가 아닙니다.");
+		}
 		
+		//레포야 게시글 삭제해줘. 게시글 줄게
 		//소프트 삭제 : 실제 데이터 안지움
 		post.delete();
 		
@@ -88,9 +98,14 @@ public class PostService {
 	}
 
 	@Transactional
-	public void updatePost(int id, PostDTO dto) {
+	public void updatePost(int id, PostDTO dto, String username) {
 		//id와 일치하는 게시글을 가져옴
 		Post post = postRepository.findById(id).orElseThrow(()-> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+		
+		if(!post.getMemberId().equals(username)) {
+			throw new IllegalArgumentException("작성자가 아닙니다.");
+		}
+		
 		//수정할 제목과 내용체크
 		if(dto == null || !dto.checkTitleValid()) {
 			throw new IllegalArgumentException("제목을 입력하세요.");
@@ -102,5 +117,7 @@ public class PostService {
 		post.update(dto.title(),dto.content());
 		
 	}
+
+		
 
 }

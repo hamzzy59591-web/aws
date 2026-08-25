@@ -1,8 +1,11 @@
 package kr.fast.boot.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,10 +41,17 @@ public class PostController {
 	}
 	
 	@PostMapping("")
-	public ResponseEntity<Object> boardPost(@RequestBody PostDTO dto){
+	public ResponseEntity<Object> boardPost(
+			@RequestBody PostDTO dto,
+			@AuthenticationPrincipal String username){
+		System.out.println(username);
 		try {
-			postService.insertPost(dto);
-			return ResponseEntity.ok("게시글을 등록했습니다.");
+			int postId = postService.insertPost(dto,username);
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("postId",postId);
+			map.put("msg", "게시글을 등록했습니다.");
+			
+			return ResponseEntity.ok(map);
 		}catch(Exception e) {
 			return ResponseEntity.ok(e.getMessage());
 		}
@@ -66,9 +76,11 @@ public class PostController {
 	}
 	
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Object> idDelete(@PathVariable("id")int id){
+	public ResponseEntity<Object> idDelete(
+			@PathVariable("id")int id,
+			@AuthenticationPrincipal String username){
 		try {
-			postService.deletePost(id);
+			postService.deletePost(id,username);
 			return ResponseEntity.ok("게시글을 삭제했습니다.");
 		}catch(Exception e) {
 			return ResponseEntity.ok(e.getMessage());
@@ -78,9 +90,10 @@ public class PostController {
 	@PutMapping("/{id}")
 	public ResponseEntity<Object> idPut(
 			@PathVariable("id")int id,
-			@RequestBody PostDTO dto){
+			@RequestBody PostDTO dto,
+			@AuthenticationPrincipal String username){
 		try {
-			postService.updatePost(id, dto);
+			postService.updatePost(id, dto, username);
 			return ResponseEntity.ok("게시글을 수정했습니다.");
 		}catch(Exception e) {
 			return ResponseEntity.ok(e.getMessage());

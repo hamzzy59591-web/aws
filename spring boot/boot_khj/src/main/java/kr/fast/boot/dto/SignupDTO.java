@@ -1,4 +1,4 @@
-package kr.fast.boot.controller;
+package kr.fast.boot.dto;
 
 import lombok.Data;
 

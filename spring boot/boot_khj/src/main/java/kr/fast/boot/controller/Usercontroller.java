@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import kr.fast.boot.dto.SignupDTO;
 import kr.fast.boot.service.UserService;
 import lombok.AllArgsConstructor;
 

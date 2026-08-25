@@ -4,7 +4,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kr.fast.boot.controller.SignupDTO;
+import kr.fast.boot.dto.SignupDTO;
 import kr.fast.boot.entity.Member;
 import kr.fast.boot.repository.MemberRepository;
 import lombok.AllArgsConstructor;
