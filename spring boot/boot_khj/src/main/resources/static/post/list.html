@@ -35,23 +35,26 @@
 		<a href="/post/insert.html" class="btn btn-outline-success btn-insert">글쓰기</a>
 	</div>
 	
-		<script>
+<script>
 		
-			const 글쓰기버튼 = document.querySelector(".btn-insert");
-		    글쓰기버튼.addEventListener("click", async e=>{
-		       const info = await getMyInfo();
-		       //로그인 안했으면 컨펌창 띄우고 
-		       if(!info || !info.username){
-		         	 e.preventDefault();
-		         	 if(confirm("로그인이 필요한 서비스입니다.\n로그인페이지로 이동하겠습니까?")){
-		           		  location.href="/login.html"
-		          	 }
-		       }
-		       
-		   	 });
+	const 글쓰기버튼 = document.querySelector(".btn-insert");
+	글쓰기버튼.addEventListener("click", async e=>{
+		e.preventDefault();
+		const info = await getMyInfo();
+		//로그인 안했으면 컨펌창 띄우고 
+		if(!info || !info.username || info.username == "anonymousUser"){
+			
+			if(confirm("로그인이 필요한 서비스입니다.\n로그인페이지로 이동하겠습니까?")){
+				location.href="/login.html"
+			}	
+		}
+		else{
+			location.href="/post/insert.html";
+		}
+	});
 		
 		
-		</script>
+</script>
 	
 	<script>
 		//게시글 목록을 가져와서 콘솔에 출력하도록 작업
