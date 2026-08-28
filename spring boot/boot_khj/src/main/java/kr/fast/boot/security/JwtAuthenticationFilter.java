@@ -27,7 +27,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
             throws ServletException, IOException{
     	
     	//request에서 토큰을 가져옴
-
         String token = resolveToken(request);
 
         //토큰이 있고 유효하면
