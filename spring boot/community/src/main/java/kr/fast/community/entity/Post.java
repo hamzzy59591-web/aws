@@ -69,4 +69,11 @@ public class Post {
 		this.title = title;
 		this.content = content;
 	}
+
+	public Post(String title, String content, Board board, String memberId) {
+		this.title = title;
+		this.content = content;
+		this.board = board;
+		this.memberId = memberId;
+	}
 }

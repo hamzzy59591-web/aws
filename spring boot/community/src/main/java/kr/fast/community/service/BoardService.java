@@ -1,5 +1,7 @@
 package kr.fast.community.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import kr.fast.community.entity.Board;
@@ -10,7 +12,11 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class BoardService {
 
-	private final BoardRepository boardrepository;
+	private final BoardRepository boardRepository;
+
+	public List<Board> getBoards() {
+		return boardRepository.findAll();
+	}
 
 
 		
