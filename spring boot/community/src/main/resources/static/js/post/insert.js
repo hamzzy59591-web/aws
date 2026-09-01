@@ -62,14 +62,26 @@ async function insertPost(e){
 		return;
 	}
 	
+	//게시글과 첨부파일을 하나로 합침
+	const formData = new FormData();
+	// JSON 데이터를 Blob 데이터로 변환
+	const jsonBlob = new Blob([JSON.stringify(data)],{type:"application/json"});
+	formData.append("post",jsonBlob);
+	
+	const 첨부파일요소들 = document.querySelectorAll("[name=files]");
+	첨부파일요소들.forEach(첨부파일요소=>{
+		const 첨부파일들 = 첨부파일요소.files;
+		for(let i = 0; i < 첨부파일들.length; i++){
+			formData.append("files",첨부파일들[i]);
+		}
+	});
+	
+	
 	try{
 		//게시판 목록 가져오기
 		const response = await authFetch(`/api/posts`,{
 			method : "post",
-			headers : {
-				"Content-Type": "application/json"
-			},
-			body: JSON.stringify(data)
+			body: formData
 		});
 			
 		const result = await response.json();

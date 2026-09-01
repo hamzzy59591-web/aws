@@ -1,27 +1,41 @@
 package kr.fast.boot.service;
 
-import kr.fast.boot.repository.BoardRepository;
-
+import java.io.File;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kr.fast.boot.dto.BoardDTO;
+import jakarta.annotation.PostConstruct;
 import kr.fast.boot.dto.PostDTO;
-import kr.fast.boot.entity.Board;
-import kr.fast.boot.entity.Member;
 import kr.fast.boot.entity.Post;
+import kr.fast.boot.repository.BoardRepository;
+import kr.fast.boot.repository.MemberRepository;
 import kr.fast.boot.repository.PostRepository;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 @Transactional(readOnly=true)
-@AllArgsConstructor
 public class PostService {
 	
 	private final BoardRepository boardRepository;
 	private final PostRepository postRepository;
+	private final MemberRepository memberRepository;
+	
+	@Value("${file.path}")
+	private String uploadFilePath;
+	
+	@PostConstruct
+	public void init() {
+		File dir = new File(uploadFilePath);
+		if(!dir.exists()) {
+			dir.mkdirs();
+		}
+		System.out.println(uploadFilePath);
+	}
+	
 
 
 	@Transactional

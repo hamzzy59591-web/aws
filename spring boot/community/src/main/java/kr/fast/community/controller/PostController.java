@@ -1,5 +1,9 @@
 package kr.fast.community.controller;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -12,11 +16,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import kr.fast.community.dto.CommentRequest;
 import kr.fast.community.dto.MessageResponse;
 import kr.fast.community.dto.PageResponse;
 import kr.fast.community.dto.PostRequest;
+import kr.fast.community.entity.Comment;
+import kr.fast.community.entity.File;
 import kr.fast.community.entity.Post;
 import kr.fast.community.security.CustomUserDetails;
 import kr.fast.community.service.BoardService;
@@ -45,7 +54,11 @@ public class PostController {
 	public ResponseEntity<Object> idGet(@PathVariable("id")int id){
 		try {
 			Post post = postService.getPost(id);
-			return ResponseEntity.ok(post);
+			List<File> files = postService.getFiles(id);
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("post", post);
+			map.put("files", files);
+			return ResponseEntity.ok(map);
 			
 		}catch(Exception e) {
 			e.printStackTrace();
@@ -55,16 +68,28 @@ public class PostController {
 	
 	@PostMapping("")
 	public ResponseEntity<Object> post(
-			@RequestBody PostRequest request, //화면에서 보낸 게시글 정보
+			@RequestPart("post") PostRequest request, //화면에서 보낸 게시글 정보
+			@RequestPart(value="files", required = false) List<MultipartFile> files,
 			@AuthenticationPrincipal CustomUserDetails userDetails //로그인한 회원 정보
 			){
+		
 		MessageResponse ms;
 		try {
-			ms = postService.insertPost(request,userDetails);
+			ms = postService.insertPost(request,userDetails,files);
 		}catch(Exception e) {
 			ms = new MessageResponse(false,e.getMessage());
 		}
 		return ResponseEntity.ok(ms);
+	}
+	
+	@PostMapping("/{id}/comment")
+	public ResponseEntity<Object> createComment1(
+			@PathVariable("id")int id,
+			@RequestBody CommentRequest request,
+			@AuthenticationPrincipal CustomUserDetails userDetails
+			){
+		MessageResponse ms= postService.insertComment(id, request, userDetails);
+		return ResponseEntity.ok("ok");
 	}
 	
 }

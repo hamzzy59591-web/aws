@@ -1,4 +1,4 @@
-/*=============================
+ /*=============================
 	DOM 트리 구성이 완료되면 실행
 =============================*/
 
@@ -26,7 +26,9 @@ async function getPost(){
 			alert(result);
 			throw Error("게시글이 없거나 삭제됨");
 		}
-		const post = await response.json();
+		const result = await response.json();
+		const post = result.post;
+		const files = result.files;
 		
 		insertValue("[name=title]", post.title);
 		insertValue("[name=writer]", post.memberId);
@@ -40,6 +42,23 @@ async function getPost(){
 		//수정/추가버튼 보여주기/감추기
 		visibleButtons(false);
 		
+		const 첨부파일박스 = document.querySelector("#files");
+		//첨부파일 보여주기
+		if(!files || files.length == 0){
+			첨부파일박스.innerHTML = `<div class="form-control">없음</div>`;
+			return;
+		}
+		let html = '';
+		files.forEach(file=>{
+			html +=`
+				<a class="form-control" href="/api/upload/${file.savedName}" 
+				download=">${file.originalName}" >
+				${file.originalName}
+				</a>
+			`;
+		});
+		
+		첨부파일박스.innerHTML = html;
 	}catch(e){
 		console.error("게시글 가져오기 실패",e)
 	}
@@ -61,4 +80,43 @@ function visibleButtons(visible){
 	if(!visible){
 		document.querySelector(".btns").innerHTML = '';
 	}
+}
+
+
+async function createComment1(e){
+		e.preventDefault();
+		
+		const formData = new FormData(e.target);
+		const data = Object.fromEntries(formData);
+		
+		if(data.content.trim().length == 0){
+			alert("댓글을 입력하세요.")
+			return;
+		}
+		
+		const urlParams = new URLSearchParams(location.search);
+		const postId = urlParams.get("num");
+	//url:/api/posts/${postId}/comment
+	//method : post
+	try{
+		const response = await authFetch(`/api/posts/${postId}/comment`,{
+			method : "post",
+			headers : {
+				"Content-Type": "application/json"
+			},
+			body : JSON.stringify(data)
+		});
+		if (!response.ok) {
+			const message = await response.text();
+			throw new Error(`댓글 등록 실패: ${response.status}, ${message}`);
+		}
+		
+		const restlt = await response.text();
+		//댓글 화면에 배치 
+		
+	}catch(e){
+		console.error(e);
+	}
+	
+	
 }
