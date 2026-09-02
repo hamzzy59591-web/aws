@@ -20,7 +20,11 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import kr.fast.community.dto.CommentRequest;
+import kr.fast.community.dto.LikeRequest;
 import kr.fast.community.dto.MessageResponse;
 import kr.fast.community.dto.PageResponse;
 import kr.fast.community.dto.PostRequest;
@@ -40,10 +44,15 @@ public class PostController {
 	private final PostService postService;
 	private final BoardService boardService;
 	
+	@Operation(summary = "게시글 목록 조회", description = "검색어, 타입, 페이지를 이용하여 게시글 목록을 조회")
 	@GetMapping("")
 	public ResponseEntity<Object> get(
+			@Parameter(description = "검색 타입",
+					schema = @Schema(type ="String", allowableValues = {"all","title","writer"}))
 			@RequestParam(required = false, defaultValue = "all", name ="type" )String type,
+			@Parameter(description = "검색어")
 			@RequestParam(required = false, defaultValue = "", name ="keyword" )String keyword,
+			@Parameter(description = "정렬 방법")
 			@PageableDefault(size=10, sort="id", direction = Sort.Direction.DESC)
 				Pageable pageble){
 		PageResponse<Post> pageResponse = postService.getPosts(type, keyword, pageble);
@@ -89,7 +98,44 @@ public class PostController {
 			@AuthenticationPrincipal CustomUserDetails userDetails
 			){
 		MessageResponse ms= postService.insertComment(id, request, userDetails);
-		return ResponseEntity.ok("ok");
+		return ResponseEntity.ok(ms);
 	}
 	
+	@GetMapping("/{id}/comment")
+	public ResponseEntity<Object> getComment(@PathVariable("id")int id,
+			@PageableDefault(size=3, sort="originId", direction = Sort.Direction.ASC)
+			Pageable pageble){
+		//서비스한테 게시글 아이디주고 댓글 목록 가져오라고 시키기
+		PageResponse<Comment> pageResponse = postService.getPosts(id, pageble);
+		return ResponseEntity.ok(pageResponse);
+	}
+	
+	
+	@PostMapping("/{id}/likes")
+	public ResponseEntity<Object> likesGet(
+			@PathVariable("id")int id,
+			@AuthenticationPrincipal CustomUserDetails userDetails,
+			@RequestBody LikeRequest request){
+		//서비스한테 게시글 아이디주고 댓글 목록 가져오라고 시키기
+		MessageResponse ms;
+		Map<String, Object> map = new HashMap<String, Object>();
+		try {
+			int state = postService.like(id,userDetails,request);
+			String msg;
+			switch(state) {
+			case 1: msg = "좋아요를 눌렀습니다."; break;
+			case -1: msg = "싫어요를 눌렀습니다."; break;
+			default:
+				msg = request.state() == 1 ? "좋아요를 취소했습니다." : "싫어요를 취소했습니다.";
+			}
+			map.put("state", state);
+			
+			ms = new MessageResponse (true, msg);
+			
+		}catch(Exception e) {
+			ms = new MessageResponse(false, e.getMessage());
+		}
+		map.put("ms", ms);
+		return ResponseEntity.ok(map);
+	}
 }

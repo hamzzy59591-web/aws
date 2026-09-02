@@ -76,4 +76,6 @@ public class Post {
 		this.board = board;
 		this.memberId = memberId;
 	}
+
+		
 }

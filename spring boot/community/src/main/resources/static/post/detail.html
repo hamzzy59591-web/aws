@@ -37,8 +37,8 @@
 			<input type="text" class="form-control" readonly name="createdAt">			
 		</div>
 		<div class="mb-3 d-flex justify-content-center">
-			 <button class="btn btn-outline-success me-3">좋아요(<span class="up-count">0</span>)</button>
-			 <button class="btn btn-outline-success">싫어요(<span class="down-count">0</span>)</button>
+			 <button class="btn btn-outline-success me-3" onclick="clickLike(1)">좋아요(<span class="up-count">0</span>)</button>
+			 <button class="btn btn-outline-success" onclick="clickLike(-1)">싫어요(<span class="down-count">0</span>)</button>
 		</div>
 		<label class="form-label">내용</label>
 		<div class="form-group mb-3">
@@ -57,12 +57,26 @@
 		
 		<hr>
 		<h1>댓글 목록</h1>
+		<ul id="comment-list">
+			<div class="card mb-3 card-body">
+				<div class="card-body">
+					<div class="d-flex justify-content-between">
+				    	<strong>김하니</strong>
+				        <small class="text-secondary">2026-09-02</small>
+				    </div>
+				    <p class="mt-3 mb-0">안녕하세요</p>
+				 </div>
+			</div>
+		</ul>
+		<nav aria-label="댓글 페이지">
+			<ul id="comment-pagination" class="pagination justify-content-center">
+			</ul>
+		</nav>
 		<div id="comment-box">
 		<form class="input-group mb-5" onsubmit="createComment1(event)">
 			<textarea class="form-control" name="content"></textarea>
 			<button class="btn btn-success">등록</button>
 		</form>
-		
 		<!--  
 		댓글을 입력해서 등록 버튼을 클릭하면 비동기 방식으로 서버에 댓글 정보를 전송
 		-->
